@@ -27,6 +27,60 @@ services:
     links:
       - postgres
 
+  locations_backend:
+    build:
+      context: https://${GITHUB_ACCESS_TOKEN}:@github.com/sarang-apps/locations-backend.git#develop
+    ports:
+      - "7001:8001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE=locations
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_CONNECTION=postgres
+      - EXTERNAL_PORT=7001
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGDATABASE=locations
+      - PGHOST=postgres
+      - ES_URL=http://elasticsearch:9200/
+      - ES_HOST=elasticsearch
+      - ES_PORT=9200
+      - DB_TIMEZONE=+07:00
+    links:
+      - postgres
+
+  people_backend:
+    build:
+      context: https://${GITHUB_ACCESS_TOKEN}:@github.com/sarang-apps/people-backend.git#develop
+    ports:
+      - "7002:8002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE=people
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_CONNECTION=postgres
+      - EXTERNAL_PORT=7002
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGDATABASE=people
+      - PGHOST=postgres
+      - ES_URL=http://elasticsearch:9200/
+      - ES_HOST=elasticsearch
+      - ES_PORT=9200
+      - DB_TIMEZONE=+07:00
+    links:
+      - postgres
+
   postgres:
     build: ./postgres_docker
     ports:
