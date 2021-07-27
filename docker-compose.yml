@@ -1,8 +1,8 @@
 version: "2.1"
 services:
-  tags_backend:
+  dam_backend:
     build:
-      context: https://${GITHUB_ACCESS_TOKEN}:@github.com/sarang-apps/tags-backend.git#develop
+      context: https://${GITHUB_ACCESS_TOKEN}:@github.com/sarang-apps/dam-backend.git#develop
     ports:
       - "7000:8000"
     depends_on:
@@ -11,7 +11,7 @@ services:
     environment:
       - DB_USERNAME=postgres
       - DB_PASSWORD=postgres
-      - DB_DATABASE=tags
+      - DB_DATABASE=dam
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_CONNECTION=postgres
@@ -27,11 +27,38 @@ services:
     links:
       - postgres
 
+  tags_backend:
+    build:
+      context: https://${GITHUB_ACCESS_TOKEN}:@github.com/sarang-apps/tags-backend.git#develop
+    ports:
+      - "7001:8001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE=tags
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_CONNECTION=postgres
+      - EXTERNAL_PORT=7001
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGDATABASE=tags
+      - PGHOST=postgres
+      - ES_URL=http://elasticsearch:9200/
+      - ES_HOST=elasticsearch
+      - ES_PORT=9200
+      - DB_TIMEZONE=+07:00
+    links:
+      - postgres
+
   locations_backend:
     build:
       context: https://${GITHUB_ACCESS_TOKEN}:@github.com/sarang-apps/locations-backend.git#develop
     ports:
-      - "7001:8001"
+      - "7002:8002"
     depends_on:
       postgres:
         condition: service_healthy
@@ -42,7 +69,7 @@ services:
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_CONNECTION=postgres
-      - EXTERNAL_PORT=7001
+      - EXTERNAL_PORT=7002
       - PGUSER=postgres
       - PGPASSWORD=postgres
       - PGDATABASE=locations
@@ -59,7 +86,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_MULTIPLE_DATABASES=tags,postgres locations,postgres
+      - POSTGRES_MULTIPLE_DATABASES=dam,postgres tags,postgres locations,postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
       - PGUSER=postgres
