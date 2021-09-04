@@ -123,6 +123,8 @@ services:
     ports:
       - "9200:9200"
       - "9300:9300"
+    volumes:
+      - elastic:/var/lib/elastic
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9200/"]
       interval: 30s
@@ -132,5 +134,6 @@ services:
 volumes:
   dam-db:
   pgadmin-data:
+  elastic:
 
 networks: {}
